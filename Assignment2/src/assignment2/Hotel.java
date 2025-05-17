@@ -36,7 +36,7 @@ public class Hotel {
     // Reads room data from file and loads it into the rooms map
     public void readRooms() {
         rooms.clear();
-        rooms = FileManager.readRooms();
+        rooms = RoomDAO.readRooms();
     }
     
     // Reads booking data from file and loads it into the bookings map
