@@ -21,7 +21,7 @@ public class Database {
     private static final String DB_PASSWORD = "pdc";
     private static final String URL = "jdbc:derby:HotelDB;create=true";
 
-    private static Database dbInstance;
+    private static Database dbInstance = null;
     private static Connection conn;
 
     private Database() {

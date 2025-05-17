@@ -59,7 +59,7 @@ public class RoomDAO {
         return null;
     }
 
-    public Map<Integer, Room> readRooms() {
+    public static Map<Integer, Room> readRooms() {
         Map<Integer, Room> rooms = new HashMap<>();
 
         try {
@@ -79,13 +79,13 @@ public class RoomDAO {
         }
         return rooms;
     }
-    
-    public boolean writeRoom(Room room) {
-        
+
+    public static boolean addRoom(Room room) {
+
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
-            stmt.executeUpdate("INSERT INTO ROOMS VALUES ("+ room.getRoomNumber() + ", '" + room.getRoomType() + "', " + room.getBaseRate() + ", " + room.getRatePerPerson() + ", " + room.getMaxGuests()+ ")");
-           
+            stmt.executeUpdate("INSERT INTO ROOMS VALUES (" + room.getRoomNumber() + ", '" + room.getRoomType() + "', " + room.getBaseRate() + ", " + room.getRatePerPerson() + ", " + room.getMaxGuests() + ")");
+
             return true;
 
         } catch (SQLException e) {
@@ -93,8 +93,22 @@ public class RoomDAO {
             return false;
         }
     }
-    
-    private Room buildRoomFromResultSet(ResultSet rs) throws SQLException {
+
+    public static boolean removeRoom(int roomNumber) {
+
+        try {
+            Statement stmt = Database.getInstance().getConnection().createStatement();
+            stmt.executeUpdate("DELETE FROM ROOMS WHERE ROOM_NUMBER = " + roomNumber);
+
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private static Room buildRoomFromResultSet(ResultSet rs) throws SQLException {
         int roomNumber = rs.getInt("ROOM_NUMBER");
         String roomType = rs.getString("ROOM_TYPE");
         double baseRate = rs.getDouble("BASE_RATE");

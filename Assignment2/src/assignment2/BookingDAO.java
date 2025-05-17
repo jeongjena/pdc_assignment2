@@ -62,7 +62,7 @@ public class BookingDAO {
 
     }
 
-    public Map<Integer, Booking> readBookings() {
+    public static Map<Integer, Booking> readBookings() {
         Map<Integer, Booking> bookings = new HashMap<>();
 
         try {
@@ -82,13 +82,13 @@ public class BookingDAO {
         }
         return bookings;
     }
-    
-    public boolean writeBookings(Booking booking) {
-        
+
+    public boolean addBooking(Booking booking) {
+
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
-            stmt.executeUpdate("INSERT INTO BOOKINGS VALUES ("+ booking.getBookingNumber() + ", '" + booking.getCheckInDate() + "', '" + booking.getCheckOutDate() + "', " + booking.getRoomNumber() + ", " + booking.getNumberOfGuests() + ", '" + booking.getGuest().getFirstName() + "', '" + booking.getGuest().getLastName() + "', '" + booking.getGuest().getPhone() + "', " + booking.getGuest().getPassword() +")");
-           
+            stmt.executeUpdate("INSERT INTO BOOKINGS VALUES (" + booking.getBookingNumber() + ", '" + booking.getCheckInDate() + "', '" + booking.getCheckOutDate() + "', " + booking.getRoomNumber() + ", " + booking.getNumberOfGuests() + ", '" + booking.getGuest().getFirstName() + "', '" + booking.getGuest().getLastName() + "', '" + booking.getGuest().getPhone() + "', " + booking.getGuest().getPassword() + ")");
+
             return true;
 
         } catch (SQLException e) {
@@ -97,7 +97,21 @@ public class BookingDAO {
         }
     }
 
-    private Booking buildBookingFromResultSet(ResultSet rs) throws SQLException {
+    public static boolean removeBooking(int bookingNumber) {
+
+        try {
+            Statement stmt = Database.getInstance().getConnection().createStatement();
+            stmt.executeUpdate("DELETE FROM BOOKINGS WHERE BOOKING_NUMBER = " + bookingNumber);
+                    
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private static Booking buildBookingFromResultSet(ResultSet rs) throws SQLException {
         Booking booking = new Booking();
         booking.setBookingNumber(rs.getInt("BOOKING_NUMBER"));
         booking.setCheckInDate(rs.getDate("CHECK_IN").toLocalDate());
