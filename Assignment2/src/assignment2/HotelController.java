@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
  * @author uj265
  */
 public class HotelController extends Controller {
+
     private Hotel hotel;
     private HotelView hotelView;
 
@@ -32,7 +33,11 @@ public class HotelController extends Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             hotel.readRooms();
-            hotel.printRooms();
+            RoomView roomView = new RoomView();
+            hotelView.setVisible(false);
+            hotelView.dispose();
+            roomView.printRooms(hotel.getRooms());
+            Controller controller = new Controller(roomView);
         }
     }
 
@@ -65,12 +70,13 @@ public class HotelController extends Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("Admin Login Clicked");
-            
-            view.setVisible(false);
-            view.dispose();
-            
-            AdminView adminView = new AdminView();
-            AdminController adminController = new AdminController(adminView);
+
+            if (Administrator.checkAdminPassword()) {
+                view.setVisible(false);
+                view.dispose();
+                AdminView adminView = new AdminView();
+                AdminController adminController = new AdminController(adminView);
+            }
         }
     }
 }

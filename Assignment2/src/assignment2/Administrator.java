@@ -25,7 +25,7 @@ import java.util.Map;
 public class Administrator {
 
     private static final String ADMIN_PASSWORD = "admin123";
-    
+
     public Administrator() {
     }
 
@@ -35,37 +35,35 @@ public class Administrator {
      */
     public static boolean checkAdminPassword() {
         while (true) {
-            String input = UserPrompt.promptString("\nEnter administrator password");
+            String input = UserPromptView.promptString("\nEnter administrator password");
             if (input == null) {
                 return false;
             }
             if (input.equals(ADMIN_PASSWORD)) {
                 return true;
             } else {
-                System.out.println("Incorrect password. Try again.");
+                UserPromptView.showError("Incorrect password. Try again.");
             }
         }
     }
 
     /**
-     * Adds a new room by:
-     * - Prompting for room number and checking duplication
-     * - Getting and validating room type
-     * - Collecting rates and guest limit
-     * - Writing the updated room list to file
+     * Adds a new room by: - Prompting for room number and checking duplication
+     * - Getting and validating room type - Collecting rates and guest limit -
+     * Writing the updated room list to file
      */
     public static void addRoom() {
-        Map<Integer, Room> rooms = FileManager.readRooms();
+        Map<Integer, Room> rooms = RoomDAO.readRooms();
         int roomNumber;
 
         // Prompt for unique room number
         while (true) {
-            roomNumber = UserPrompt.promptInt("\nEnter room number to add");
+            roomNumber = UserPromptView.promptInt("\nEnter room number to add");
             if (roomNumber == -1) {
                 return;
             }
             if (rooms.containsKey(roomNumber)) {
-                System.out.println("Room number already exists. Try a different number.");
+                UserPromptView.showError("Room number already exists. Try a different number.");
             } else {
                 break;
             }
@@ -74,68 +72,70 @@ public class Administrator {
         // Prompt for valid room type (SINGLE, DOUBLE, SUITE)
         Room.RoomType roomType = null;
         while (roomType == null) {
-            String input = UserPrompt.promptString("Enter room type (SINGLE/DOUBLE/SUITE)");
+            String input = UserPromptView.promptString("Enter room type (SINGLE/DOUBLE/SUITE)");
             if (input == null) {
                 return;
             }
             try {
                 roomType = Room.RoomType.valueOf(input.toUpperCase());
             } catch (IllegalArgumentException e) {
-                System.out.println("Invalid room type.");
+                UserPromptView.showError("Invalid room type.");
             }
         }
 
         // Get pricing info
-        double baseRate = UserPrompt.promptDouble("Enter base rate");
+        double baseRate = UserPromptView.promptDouble("Enter base rate");
         if (baseRate == -1.00) {
             return;
         }
-        double ratePerPerson = UserPrompt.promptDouble("Enter rate per person");
+        double ratePerPerson = UserPromptView.promptDouble("Enter rate per person");
         if (ratePerPerson == -1.00) {
             return;
         }
-        
+
+        Room room;
+
         // Create specific room object
         switch (roomType) {
             case SINGLE:
-                rooms.put(roomNumber, new SingleRoom(roomNumber, baseRate, ratePerPerson));
+                room = new SingleRoom(roomNumber, baseRate, ratePerPerson);
                 break;
             case DOUBLE:
-                rooms.put(roomNumber, new DoubleRoom(roomNumber, baseRate, ratePerPerson));
+                room = new DoubleRoom(roomNumber, baseRate, ratePerPerson);
                 break;
             case SUITE:
-                int maxGuests = UserPrompt.promptInt("Enter maximum guests capacity for suite");
+                int maxGuests = UserPromptView.promptInt("Enter maximum guests capacity for suite");
                 if (maxGuests == -1) {
                     return;
                 }
-                rooms.put(roomNumber, new SuiteRoom(roomNumber, baseRate, ratePerPerson, maxGuests));
+                room = new SuiteRoom(roomNumber, baseRate, ratePerPerson, maxGuests);
                 break;
             default:
-                System.out.println("Invalid room type. Room not added.");
+                UserPromptView.showError("Invalid room type. Room not added.");
                 return;
         }
-        FileManager.writeRooms(rooms); // Persist updated room list
-        System.out.println("Room added successfully.");
+        if(RoomDAO.addRoom(room)) {// Persist updated room list
+           UserPromptView.showMessage("Room" + roomNumber + " is added successfully.");
+        }
     }
 
     /**
-     * Removes a room if:
-     * - It exists
-     * - No current bookings are associated with it
-     * 
+     * Removes a room if: - It exists - No current bookings are associated with
+     * it
+     *
      * Otherwise, informs the user accordingly.
      */
     public static void removeRoom() {
-        Map<Integer, Room> rooms = FileManager.readRooms();
+        Map<Integer, Room> rooms = RoomDAO.readRooms();
 
         while (true) {
-            int roomNumber = UserPrompt.promptInt("\nEnter room number to remove");
+            int roomNumber = UserPromptView.promptInt("\nEnter room number to remove");
             if (roomNumber == -1) {
                 return;
             }
             Room targetRoom = rooms.get(roomNumber);
             if (targetRoom != null) {
-                Map<Integer, Booking> bookings = FileManager.readBookings();
+                Map<Integer, Booking> bookings = BookingDAO.readBookings();
                 boolean bookingExists = false;
                 // Check for conflicting bookings
                 for (Booking b : bookings.values()) {
@@ -145,15 +145,14 @@ public class Administrator {
                     }
                 }
                 if (bookingExists) {
-                    System.out.println("Cannot remove room. Booking exists for this room.");
+                    UserPromptView.showError("Cannot remove room. Booking exists for this room.");
                 } else {
-                    rooms.remove(roomNumber);
-                    FileManager.writeRooms(rooms);
-                    System.out.println("Room number " + roomNumber + " removed successfully.");
+                    RoomDAO.removeRoom(roomNumber);
+                    UserPromptView.showMessage("Room number " + roomNumber + " removed successfully.");
                     return;
                 }
             } else {
-                System.out.println("Room number " + roomNumber + " not found.");
+                UserPromptView.showError("Room number " + roomNumber + " not found.");
             }
         }
     }

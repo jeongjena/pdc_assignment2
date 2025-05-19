@@ -37,14 +37,14 @@ public abstract class Room {
     
     
     // Prints basic room information including room number, type, and max guests.
-    public void printRoom() {
-        System.out.println("Room Number: " + roomNumber + " Room Type: " + roomType + " Maximum Guests Allowed: " + maxGuests);
+    public String printRoom() {
+        return ("Room Number: " + roomNumber + "&emsp;|&emsp; Room Type: " + roomType + "&emsp;|&emsp; Maximum Guests Allowed: " + maxGuests);
     } 
     
     // Prints room information along with total price for a given number of guests and nights.
-    public void printRoomWithPrice(int numGuests, int nights) {
-        System.out.println("Room Number: " + roomNumber + " Room Type: " + roomType + " Maximum Guests Allowed: " + maxGuests
-                    + " Total Price For " + numGuests + " Guests: $" + calculatePrice(numGuests) * nights);
+    public String printRoomWithPrice(int numGuests, int nights) {
+        return("Room Number: " + roomNumber + "&emsp;|&emsp; Room Type: " + roomType + "&emsp;|&emsp; Maximum Guests Allowed: " + maxGuests
+                    + "&emsp;|&emsp; Total Price For " + numGuests + " Guests: $" + calculatePrice(numGuests) * nights);
     }
 
     // --- Getter and Setter methods ---
