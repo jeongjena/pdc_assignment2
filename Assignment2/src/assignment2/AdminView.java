@@ -21,8 +21,6 @@ import javax.swing.JPasswordField;
 public class AdminView extends View {
 
     public JPasswordField passwordField;
-    private JButton loginButton;
-    private JLabel label;
     private JButton addRoomButton = new JButton("Add Room");
     private JButton removeRoomButton = new JButton("Remove Room");
 
@@ -53,14 +51,5 @@ public class AdminView extends View {
 
     public void addRemoveRoomListener(ActionListener listener) {
         removeRoomButton.addActionListener(listener);
-    }
-
-    public String getEnteredPassword() {
-        return new String(passwordField.getPassword());
-    }
-
-    public void wrongPasswordLabel() {
-        label.setText("Password is wrong. Please try again.");
-        label.setForeground(Color.RED);
     }
 }
