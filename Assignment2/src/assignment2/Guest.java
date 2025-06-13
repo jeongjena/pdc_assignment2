@@ -132,6 +132,9 @@ public class Guest {
     public boolean checkPassword(String promt) {
         while (true) {
             String input = UserPromptView.promptString(promt);
+            if(input==null){
+                return false;
+            }
             if (input.length() == 4) {
                 if (input.startsWith("-")) {
                     UserPromptView.showError("Please enter a positive number.");

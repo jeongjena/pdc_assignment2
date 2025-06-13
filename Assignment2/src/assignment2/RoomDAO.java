@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class RoomDAO {
 
-    public Set<Integer> readRoomNumbers() {
+    public static Set<Integer> readRoomNumbers() {
         Set<Integer> roomNumbers = new HashSet<>();
 
         try {
