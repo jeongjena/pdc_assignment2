@@ -16,8 +16,17 @@ import java.util.Map;
  *
  * @author uj265
  */
+
+/**
+ * RoomDAO handles all database interactions related to rooms.
+ * This includes reading, inserting, and deleting room records.
+ */
 public class RoomDAO {
 
+    /**
+     * Reads all room numbers from the ROOMS table.
+     * Useful for validation and availability checks.
+     */
     public static Set<Integer> readRoomNumbers() {
         Set<Integer> roomNumbers = new HashSet<>();
 
@@ -27,7 +36,7 @@ public class RoomDAO {
 
             while (rs.next()) {
                 int roomNumber = rs.getInt("ROOM_NUMBER");
-                roomNumbers.add(roomNumber);
+                roomNumbers.add(roomNumber); // Add each room number to the set
             }
             
             rs.close();
@@ -41,6 +50,7 @@ public class RoomDAO {
         return roomNumbers;
     }
 
+    // Retrieves a single room from the database by its room number.
     public static Room getRoom(int roomNumber) {
 
         try {
@@ -48,7 +58,7 @@ public class RoomDAO {
             ResultSet rs = stmt.executeQuery("SELECT * FROM ROOMS WHERE ROOM_NUMBER = " + roomNumber);
 
             while (rs.next()) {
-                return buildRoomFromResultSet(rs);
+                return buildRoomFromResultSet(rs); // Build and return room object if found
             }
             
             rs.close();
@@ -61,6 +71,10 @@ public class RoomDAO {
         return null;
     }
 
+    /**
+     * Reads all room records from the database and returns them in a map.
+     * The map uses room number as the key.
+     */
     public static Map<Integer, Room> readRooms() {
         Map<Integer, Room> rooms = new HashMap<>();
 
@@ -83,6 +97,7 @@ public class RoomDAO {
         return rooms;
     }
 
+    // Adds a new room to the ROOMS table using data from a Room object.
     public static boolean addRoom(Room room) {
 
         try {
@@ -98,6 +113,7 @@ public class RoomDAO {
         }
     }
 
+    // Removes a room from the ROOMS table by its room number.
     public static boolean removeRoom(int roomNumber) {
 
         try {
@@ -113,6 +129,10 @@ public class RoomDAO {
         }
     }
 
+    /**
+     * Helper method to convert a ResultSet row into a Room object.
+     * Handles different room types (Single, Double, Suite).
+     */
     private static Room buildRoomFromResultSet(ResultSet rs) throws SQLException {
         int roomNumber = rs.getInt("ROOM_NUMBER");
         String roomType = rs.getString("ROOM_TYPE");
@@ -120,6 +140,7 @@ public class RoomDAO {
         double ratePerPerson = rs.getDouble("RATE_PER_PERSON");
         int maxGuests = rs.getInt("MAX_GUESTS");
 
+        // Determine which Room subclass to instantiate based on roomType
         switch (roomType) {
             case "SINGLE":
                 return new SingleRoom(roomNumber, baseRate, ratePerPerson);

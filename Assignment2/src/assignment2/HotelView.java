@@ -16,6 +16,12 @@ import javax.swing.JPanel;
  *
  * @author uj265
  */
+
+/**
+ * HotelView sets up the main user interface for general users.
+ * It includes buttons for viewing rooms, making/cancelling bookings,
+ * viewing existing bookings, and logging in as administrator.
+ */
 public class HotelView extends View {
 
     private JButton viewRoomsButton;
@@ -30,21 +36,29 @@ public class HotelView extends View {
         initComponents();
     }
 
+    /**
+     * Initializes and arranges UI components including labels and buttons.
+     * Buttons are placed in a grid layout panel.
+     */
     private void initComponents() {
 
+        // Welcome label at the top
         JLabel label = new JLabel("Welcome to Hotel Booking System!", JLabel.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 20));
         add(label, BorderLayout.NORTH);
 
+        // Panel with grid layout for the buttons
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(6, 1, 10, 15));
 
+        // Create buttons with appropriate labels
         viewRoomsButton = new JButton("View All Rooms");
         makeBookingButton = new JButton("Make A Booking");
         cancelBookingButton = new JButton("Cancel A Booking");
         viewBookingButton = new JButton("View My Booking");
         adminButton = new JButton("Administrator Login");
 
+        // Add buttons to panel in order
         panel.add(viewRoomsButton);
         panel.add(makeBookingButton);
         panel.add(cancelBookingButton);
@@ -55,6 +69,7 @@ public class HotelView extends View {
         add(panel, BorderLayout.CENTER);
     }
 
+    // Methods to register event listeners for each button
     public void addViewRoomsListener(ActionListener listener) {
         viewRoomsButton.addActionListener(listener);
     }

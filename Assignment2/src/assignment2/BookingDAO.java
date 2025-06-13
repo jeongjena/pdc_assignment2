@@ -16,8 +16,17 @@ import java.util.Set;
  *
  * @author uj265
  */
+
+/**
+ * BookingDAO handles basic database operations for booking data in the BOOKINGS table.
+ * It provides methods to read, add, and remove booking records.
+ */
 public class BookingDAO {
 
+    /**
+     * Reads all booking numbers from the BOOKINGS table.
+     * Used for validation when checking user input.
+     */
     public static Set<Integer> readBookingNumbers() {
         Set<Integer> bookingNumbers = new HashSet<>();
 
@@ -38,6 +47,10 @@ public class BookingDAO {
         return bookingNumbers;
     }
 
+    /**
+     * Retrieves a Booking object for the given booking number.
+     * Returns null if the booking is not found or an error occurs.
+     */
     public static Booking getBooking(int bookingNumber) {
 
         try {
@@ -47,7 +60,7 @@ public class BookingDAO {
             Booking booking = new Booking();
             Guest guest = new Guest();
             while (rs.next()) {
-                return buildBookingFromResultSet(rs);
+                return buildBookingFromResultSet(rs); // Extract and build Booking object
             }
 
             rs.close();
@@ -61,6 +74,10 @@ public class BookingDAO {
 
     }
 
+    /**
+     * Reads all bookings from the database and stores them in a map.
+     * Key: booking number, Value: Booking object
+     */
     public static Map<Integer, Booking> readBookings() {
         Map<Integer, Booking> bookings = new HashMap<>();
 
@@ -83,6 +100,10 @@ public class BookingDAO {
         return bookings;
     }
 
+    /**
+     * Inserts a new booking record into the BOOKINGS table.
+     * Returns true if insertion is successful.
+     */
     public static boolean addBooking(Booking booking) {
 
         try {
@@ -97,6 +118,10 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Deletes a booking record based on booking number.
+     * Returns true if the deletion is successful.
+     */
     public static boolean removeBooking(int bookingNumber) {
 
         try {
@@ -112,6 +137,10 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Helper method to build a Booking object from a ResultSet row.
+     * Maps database columns to Booking and Guest fields.
+     */
     private static Booking buildBookingFromResultSet(ResultSet rs) throws SQLException {
         Booking booking = new Booking();
         booking.setBookingNumber(rs.getInt("BOOKING_NUMBER"));

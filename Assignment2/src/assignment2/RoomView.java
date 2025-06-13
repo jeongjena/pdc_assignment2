@@ -16,8 +16,14 @@ import javax.swing.JPanel;
  *
  * @author uj265
  */
+
+/**
+ * RoomView is responsible for displaying room-related information
+ * on the GUI screen using Swing components.
+ */
 public class RoomView extends View {
 
+    // Displays all available rooms without pricing information.
     public void printRooms(Map<Integer, Room> rooms) {
         String text = "No rooms available.";
         if (!rooms.isEmpty()) {
@@ -27,9 +33,15 @@ public class RoomView extends View {
             }
             text += "</html>";
         }
-        displayRoomView(text);
+        displayRoomView(text); // Render room info as label
     }
 
+    /**
+     * Displays available rooms with price calculated based on number of guests and nights.
+     * @param rooms a map of roomNumber -> Room object
+     * @param numGuests number of guests for price calculation
+     * @param nights number of nights for price calculation
+     */
     public void printRoomsWithPrice(Map<Integer, Room> rooms, int numGuests, int nights) {
         String text = "No rooms available.";
         if (!rooms.isEmpty()) {
@@ -42,6 +54,10 @@ public class RoomView extends View {
         displayRoomViewWithPrice(text);
     }
 
+    /**
+     * Displays the room view with main and exit buttons.
+     * This version is for when prices are NOT displayed.
+     */
     private void displayRoomView(String text) {
         getContentPane().removeAll();
         JLabel label;
@@ -65,6 +81,10 @@ public class RoomView extends View {
         repaint();
     }
 
+    /**
+     * Displays the room view with pricing info only.
+     * This version omits main/exit buttons.
+     */
     private void displayRoomViewWithPrice(String text) {
         getContentPane().removeAll();
         JLabel label;
