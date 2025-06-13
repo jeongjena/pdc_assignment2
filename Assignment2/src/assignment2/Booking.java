@@ -52,25 +52,25 @@ public class Booking {
         this.guest = guest;
     }
 
-     /**
-     * Static method to display a booking based on its ID.
-     * It checks for the existence of the booking and associated room, 
-     * and requests password authentication before printing.
+    /**
+     * Static method to display a booking based on its ID. It checks for the
+     * existence of the booking and associated room, and requests password
+     * authentication before printing.
      */
     public static boolean printBooking(int bookingNumber) {
-        Booking b = FileManager.getBooking(bookingNumber);
+        Booking b = BookingDAO.getBooking(bookingNumber);
         if (b == null) {
-            System.out.println("Booking not found.");
+            UserPromptView.showError("Booking not found.");
             return false;
         }
-        Room r = FileManager.getRoom(b.getRoomNumber());
+        Room r = RoomDAO.getRoom(b.getRoomNumber());
         if (r == null) {
-            System.out.println("Room not found for this booking.");
+            UserPromptView.showError("Room not found for this booking.");
             return false;
         }
-        int nights = (int) ChronoUnit.DAYS.between(b.getCheckInDate(), b.getCheckOutDate());
+        
         if (b.getGuest().checkPassword("Enter your 4 digit password to view the booking")) {
-            b.printBookingWithPrice(r, nights);
+            b.printBookingWithPrice(r, b.calculateNights());
             return true;
         } else {
             return false;
@@ -79,32 +79,62 @@ public class Booking {
 
     /**
      * Displays detailed booking information with price breakdown.
+     *
      * @param room Room object used to calculate total price
      * @param nights Number of nights the room is booked for
      */
     public void printBookingWithPrice(Room room, int nights) {
-        System.out.println();
-        System.out.println("First Name: " + guest.getFirstName() + " Last Name: " + guest.getLastName() + " Phone Number: " + guest.getPhone() 
-                + "\nRoom Number: " + roomNumber + " Check-in Date: " + checkInDate + " Check-out Date: " + checkOutDate 
-                + " Number Of Guests: " + numberOfGuests + " Total Price: $" + room.calculatePrice(numberOfGuests) * nights);
+        UserPromptView.showMessage("First Name: " + guest.getFirstName() + "\nLast Name: " + guest.getLastName() + "\nPhone Number: " + guest.getPhone()
+                + "\nRoom Number: " + roomNumber + "\nCheck-in Date: " + checkInDate + "\nCheck-out Date: " + checkOutDate
+                + "\nNumber Of Guests: " + numberOfGuests + "\nTotal Price: $" + room.calculatePrice(numberOfGuests) * nights);
     }
 
     /**
-     * Prompts the user to enter a booking number and validates it against existing records.
+     * Prompts the user to enter a booking number and validates it against
+     * existing records.
+     *
      * @return the valid booking number or -1 if cancelled
      */
     public static int askBookingNumber() {
-        Set<Integer> bookingNumbers = FileManager.readBookingNumbers();
+        Set<Integer> bookingNumbers = BookingDAO.readBookingNumbers();
         while (true) {
-            int bookingNumber = UserPrompt.promptInt("\nEnter your booking number");
+            int bookingNumber = UserPromptView.promptInt("\nEnter your booking number");
             if (bookingNumber == -1) {
                 return -1;
             }
             if (bookingNumbers.contains(bookingNumber)) {
                 return bookingNumber;
             }
-            System.out.println("Booking not found.");
+            UserPromptView.showError("Booking not found.");
         }
+    }
+
+    public int askGuestNumber() {        // Booking process
+        return UserPromptView.promptInt("\nPlease enter the number of guests");
+    }
+
+    public LocalDate askCheckInDate() {
+        return UserPromptView.promptCheckInDate("Please enter your check-in date");
+    }
+
+    public LocalDate askCheckOutDate() {
+        return UserPromptView.promptCheckOutDate(checkInDate, "Please enter your check-out date");
+    }
+
+    public int calculateNights() {
+        return (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+    }
+    
+    public Boolean askGuestInfo() {
+        Guest guest = new Guest();
+        if (!guest.getGuestInfo()) {
+            return false;
+        }
+        if (guest.getGuestPassword() == -1) {
+            return false;
+        }
+        this.guest = guest;
+        return true;
     }
 
     // --- Getter and Setter methods ---

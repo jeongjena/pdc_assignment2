@@ -148,7 +148,7 @@ public class Administrator {
                     UserPromptView.showError("Cannot remove room. Booking exists for this room.");
                 } else {
                     RoomDAO.removeRoom(roomNumber);
-                    UserPromptView.showMessage("Room number " + roomNumber + " removed successfully.");
+                    UserPromptView.showMessage("Room number " + roomNumber + " is successfully removed.");
                     return;
                 }
             } else {

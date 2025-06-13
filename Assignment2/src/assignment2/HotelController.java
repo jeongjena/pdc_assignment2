@@ -6,6 +6,8 @@ package assignment2;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 /**
  *
@@ -46,6 +48,49 @@ public class HotelController extends Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("Make Booking Clicked");
+
+            Booking newBooking = new Booking();
+            int guestNumber = newBooking.askGuestNumber();
+            if (guestNumber == -1) {
+                return;
+            }
+            newBooking.setNumberOfGuests(guestNumber);
+            LocalDate checkInDate = newBooking.askCheckInDate();
+            if (checkInDate == null) {
+                return;
+            }
+            newBooking.setCheckInDate(checkInDate);
+            LocalDate checkOutDate = newBooking.askCheckOutDate();
+            if (checkOutDate == null) {
+                return;
+            }
+            newBooking.setCheckOutDate(checkOutDate);
+
+            hotel.findAvailableRooms(newBooking);
+
+            hotelView.setVisible(false);
+            RoomView roomView = new RoomView();
+            roomView.printRoomsWithPrice(hotel.getRooms(), newBooking.getNumberOfGuests(), newBooking.calculateNights());
+            int selectedRoomNumber = hotel.selectRoom(); // User selects room
+            
+            roomView.setVisible(false);
+            roomView.dispose();
+            hotelView.setVisible(true);
+            if (selectedRoomNumber == -1) {
+                return;
+            }
+            newBooking.setRoomNumber(selectedRoomNumber);
+            
+            Boolean getGuestInfo = newBooking.askGuestInfo();
+            if (!getGuestInfo) {
+                return;
+            }
+
+            boolean doubleCheck = hotel.doubleCheckBooking(newBooking);
+            if (!doubleCheck) {
+                return;
+            }
+            hotel.makeBooking(newBooking);
         }
     }
 
@@ -54,6 +99,15 @@ public class HotelController extends Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("Cancel Booking Clicked");
+            // Cancel a booking
+            int bookingNumber = Booking.askBookingNumber();
+            if (bookingNumber == -1) {
+                return;
+            }
+            hotel.readBookings();
+            if (!hotel.cancelBooking(bookingNumber)) {
+                return;
+            }
         }
     }
 
@@ -62,6 +116,13 @@ public class HotelController extends Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("View Booking Clicked");
+            int myBookingNumber = Booking.askBookingNumber();
+            if (myBookingNumber == -1) {
+                return;
+            }
+            if (!Booking.printBooking(myBookingNumber)) {
+                return;
+            }
         }
     }
 

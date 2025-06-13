@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public class BookingDAO {
 
-    public Set<Integer> readBookingNumbers() {
+    public static Set<Integer> readBookingNumbers() {
         Set<Integer> bookingNumbers = new HashSet<>();
 
         try {
@@ -29,18 +29,16 @@ public class BookingDAO {
                 int bookingNumber = rs.getInt("BOOKING_NUMBER");
                 bookingNumbers.add(bookingNumber);
             }
-
             rs.close();
             stmt.close();
-
         } catch (SQLException e) {
+            UserPromptView.showError("Booking Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
-
         return bookingNumbers;
     }
 
-    public Booking getBooking(int bookingNumber) {
+    public static Booking getBooking(int bookingNumber) {
 
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
@@ -56,6 +54,7 @@ public class BookingDAO {
             stmt.close();
 
         } catch (SQLException e) {
+            UserPromptView.showError("Booking Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
         return null;
@@ -78,20 +77,21 @@ public class BookingDAO {
             stmt.close();
 
         } catch (SQLException e) {
+            UserPromptView.showError("Booking Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
         return bookings;
     }
 
-    public boolean addBooking(Booking booking) {
+    public static boolean addBooking(Booking booking) {
 
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
             stmt.executeUpdate("INSERT INTO BOOKINGS VALUES (" + booking.getBookingNumber() + ", '" + booking.getCheckInDate() + "', '" + booking.getCheckOutDate() + "', " + booking.getRoomNumber() + ", " + booking.getNumberOfGuests() + ", '" + booking.getGuest().getFirstName() + "', '" + booking.getGuest().getLastName() + "', '" + booking.getGuest().getPhone() + "', " + booking.getGuest().getPassword() + ")");
-
+            
             return true;
-
         } catch (SQLException e) {
+            UserPromptView.showError("Booking Table is not working. Please try it again.");
             System.out.println(e.getMessage());
             return false;
         }
@@ -102,10 +102,11 @@ public class BookingDAO {
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
             stmt.executeUpdate("DELETE FROM BOOKINGS WHERE BOOKING_NUMBER = " + bookingNumber);
-                    
+                   
             return true;
 
         } catch (SQLException e) {
+            UserPromptView.showError("Booking Table is not working. Please try it again.");
             System.out.println(e.getMessage());
             return false;
         }

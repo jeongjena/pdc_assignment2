@@ -39,7 +39,7 @@ public class RoomView extends View {
             }
             text += "</html>";
         }
-        displayRoomView(text);
+        displayRoomViewWithPrice(text);
     }
 
     private void displayRoomView(String text) {
@@ -53,13 +53,31 @@ public class RoomView extends View {
             label = new JLabel(text);
         }
 
-        add(label, BorderLayout.CENTER);
+        add(label, BorderLayout.NORTH);
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 1, 10, 10));
         panel.add(mainButton);
         panel.add(exitButton);
 
         add(panel, BorderLayout.SOUTH);
+
+        revalidate();
+        repaint();
+    }
+
+    private void displayRoomViewWithPrice(String text) {
+        getContentPane().removeAll();
+        JLabel label;
+        if (text.contains("No rooms available")) {
+            label = new JLabel(text);
+            label.setForeground(Color.RED);
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+        } else {
+            label = new JLabel(text);
+            label.setFont(new Font("Arial", Font.BOLD, 12));
+        }
+
+        add(label, BorderLayout.NORTH);
 
         revalidate();
         repaint();

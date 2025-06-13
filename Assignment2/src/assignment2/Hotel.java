@@ -32,36 +32,36 @@ public class Hotel {
         rooms = new HashMap<>();
         bookings = new HashMap<>();
     }
-    
+
     // Reads room data from file and loads it into the rooms map
     public void readRooms() {
-        getRooms().clear();
+        rooms.clear();
         rooms = RoomDAO.readRooms();
     }
-    
+
     // Reads booking data from file and loads it into the bookings map
     public void readBookings() {
-        getBookings().clear();
-        bookings = FileManager.readBookings();
+        bookings.clear();
+        bookings = BookingDAO.readBookings();
     }
 
     // Allows user to select a room by entering a room number
     public int selectRoom() {
         while (true) {
-            int roomNumber = UserPrompt.promptInt("Please enter the room number you would like to book");
+            int roomNumber = UserPromptView.promptInt("Please enter the room number you would like to book");
             if (roomNumber == -1) {
                 return -1;
             }
-            if (getRooms().containsKey(roomNumber)) {
+            if (rooms.containsKey(roomNumber)) {
                 return roomNumber;
             }
-            System.out.println("Room not found.");
+            UserPromptView.showMessage("Room not found.");
         }
     }
 
     // Removes rooms from the list if they can't accommodate the given number of guests
     public void removeRoomByGuestNumber(int guestNumber) {
-        Iterator<Map.Entry<Integer, Room>> iterator = getRooms().entrySet().iterator();
+        Iterator<Map.Entry<Integer, Room>> iterator = rooms.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, Room> entry = iterator.next();
             if (entry.getValue().getMaxGuests() < guestNumber) {
@@ -72,10 +72,10 @@ public class Hotel {
 
     // Removes rooms that are already booked between check-in and check-out dates
     public void removeRoomByDate(LocalDate checkInDate, LocalDate checkOutDate) {
-        Iterator<Map.Entry<Integer, Room>> iterator = getRooms().entrySet().iterator();
+        Iterator<Map.Entry<Integer, Room>> iterator = rooms.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, Room> entry = iterator.next();
-            for (Booking b : getBookings().values()) {
+            for (Booking b : bookings.values()) {
                 if (entry.getKey() == b.getRoomNumber() && checkOutDate.isAfter(b.getCheckInDate()) && checkInDate.isBefore(b.getCheckOutDate())) {
                     iterator.remove();
                     break;
@@ -86,24 +86,24 @@ public class Hotel {
 
     // Prints a list of all available rooms
     public void printRooms() {
-        if (getRooms().isEmpty()) {
+        if (rooms.isEmpty()) {
             UserPromptView.showError("No rooms available.");
             return;
         }
-        System.out.println("\nList of rooms: ");
-        for (Room r : getRooms().values()) {
-            r.printRoom();
+        var roomList = "List of rooms: \n";
+        for (Room r : rooms.values()) {
+            roomList += r.printRoom();
         }
+        UserPromptView.showMessage(roomList);
     }
 
     // Prints rooms with total price calculation for the given number of nights and guests
     public void printRoomsWithPrice(int nights, int numGuests) {
-        System.out.println();
-        if (getRooms().isEmpty()) {
-            System.out.println("No rooms available");
+        if (rooms.isEmpty()) {
+            UserPromptView.showError("No rooms available");
             return;
         }
-        for (Room r : getRooms().values()) {
+        for (Room r : rooms.values()) {
             r.printRoomWithPrice(numGuests, nights);
         }
     }
@@ -111,7 +111,7 @@ public class Hotel {
     // Finds the next booking number by checking the current max in the map keys
     public int findNextBookingNumber() {
         int max = 0;
-        for (int b : getBookings().keySet()) {
+        for (int b : bookings.keySet()) {
             if (b > max) {
                 max = b;
             }
@@ -121,8 +121,7 @@ public class Hotel {
 
     // Displays booking details and confirms via password
     public boolean doubleCheckBooking(Booking booking) {
-        System.out.println("Double check the following details.");
-        Room r = getRooms().get(booking.getRoomNumber());
+        Room r = rooms.get(booking.getRoomNumber());
         int nights = (int) ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
         booking.printBookingWithPrice(r, nights);
 
@@ -130,34 +129,38 @@ public class Hotel {
     }
 
     // Adds a new booking and writes updated data to the file
-    public void makeBooking(Booking booking) {
+    public void makeBooking(Booking newBooking) {
         int bookingNumber = findNextBookingNumber();
-        booking.setBookingNumber(bookingNumber);
-        getBookings().put(bookingNumber, booking);
-        if (FileManager.writeBookings(getBookings())) {
-            System.out.println("Booking confirmed. Your booking number is " + bookingNumber);
-        } else {
-            System.out.println("Booking failed. Try again");
-        }
+        newBooking.setBookingNumber(bookingNumber);
+        bookings.put(bookingNumber, newBooking);
+        BookingDAO.addBooking(newBooking);
+        UserPromptView.showMessage("Booking Number: " + bookingNumber + " is successfully booked");
+    }
+
+    public void findAvailableRooms(Booking booking) {
+        readRooms();
+        readBookings();
+        removeRoomByGuestNumber(booking.getNumberOfGuests()); // Filter rooms by guest number
+        removeRoomByDate(booking.getCheckInDate(), booking.getCheckOutDate()); // Filter rooms by availability
     }
 
     // Cancels a booking if the correct password is provided
     public boolean cancelBooking(int bookingNumber) {
-        Booking targetBooking = getBookings().get(bookingNumber);
+        Booking targetBooking = bookings.get(bookingNumber);
 
         if (targetBooking == null) {
-            System.out.println("Booking not found.");
+            UserPromptView.showError("Booking not found.");
             return false;
         } else {
             if (targetBooking.getGuest().checkPassword("Enter your 4 digit password to cancel the booking")) {
-                getBookings().remove(bookingNumber);
+                bookings.remove(bookingNumber);
             } else {
                 return false;
             }
-            if (FileManager.writeBookings(getBookings())) {
-                System.out.println("Booking successfully cancelled.");
+            if (BookingDAO.removeBooking(bookingNumber)) {
+                UserPromptView.showMessage("Booking Number: " + bookingNumber + " is successfully cancelled");
             } else {
-                System.out.println("Cancellation failed.");
+                UserPromptView.showError("Cancellation failed.");
             }
         }
         return true;

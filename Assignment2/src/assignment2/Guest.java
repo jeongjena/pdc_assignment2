@@ -48,12 +48,12 @@ public class Guest {
      * Performs validation and returns false if cancelled at any step.
      */
     public boolean getGuestInfo() {
-        String firstName = UserPrompt.promptString("Enter your first name");
+        String firstName = UserPromptView.promptString("Enter your first name");
         if (firstName == null) {
             return false;
         }
         setFirstName(firstName);
-        String lastName = UserPrompt.promptString("Enter your last name");
+        String lastName = UserPromptView.promptString("Enter your last name");
         if (lastName == null) {
             return false;
         }
@@ -70,7 +70,7 @@ public class Guest {
      */
     public boolean checkPhoneNumber() { // Method generated with the help of ChatGPT for formatting phone number input
         while (true) {
-            String phone = UserPrompt.promptString("Enter your phone number e.g. 0271231234");
+            String phone = UserPromptView.promptString("Enter your phone number e.g. 0271231234");
             if (phone == null) {
                 return false;
             }
@@ -87,10 +87,10 @@ public class Guest {
                             return true;
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("Please enter a valid phone number.");
+                        UserPromptView.showError("Please enter a valid phone number.");
                     }
                 } else {
-                    System.out.println("Phone number must be 10 or 11 digits.");
+                    UserPromptView.showError("Phone number must be 10 or 11 digits.");
                 }
             }
         }
@@ -102,13 +102,13 @@ public class Guest {
      */
     public int getGuestPassword() {
         while (true) {
-            String input = UserPrompt.promptString("Enter a password (4 digits) to make booking");
+            String input = UserPromptView.promptString("Enter a password (4 digits) to make booking");
             if (input == null) {
                 return -1;
             }
             if (input.length() == 4) {
                 if (input.startsWith("-")) {
-                    System.out.println("Please enter a positive number.");
+                    UserPromptView.showError("Please enter a positive number.");
                 } else {
                     try {
                         int password = Integer.parseInt(input);
@@ -116,11 +116,11 @@ public class Guest {
                         return password;
 
                     } catch (NumberFormatException e) {
-                        System.out.println("Please enter a valid number.");
+                        UserPromptView.showError("Please enter a valid number.");
                     }
                 }
             } else {
-                System.out.println("Password must be exactly 4 digits.");
+                UserPromptView.showError("Password must be exactly 4 digits.");
             }
         }
     }
@@ -131,13 +131,10 @@ public class Guest {
      */
     public boolean checkPassword(String promt) {
         while (true) {
-            String input = UserPrompt.promptString(promt);
-            if (input == null) {
-                return false;
-            }
+            String input = UserPromptView.promptString(promt);
             if (input.length() == 4) {
                 if (input.startsWith("-")) {
-                    System.out.println("Please enter a positive number.");
+                    UserPromptView.showError("Please enter a positive number.");
                 } else {
                     try {
                         int password = Integer.parseInt(input);
@@ -145,17 +142,17 @@ public class Guest {
                             if (password == this.password) {
                                 return true;
                             } else {
-                                System.out.println("Incorrect password. Try again");
+                                UserPromptView.showError("Incorrect password. Try again");
                             }
                         } else {
-                            System.out.println("Please enter a positive number.");
+                            UserPromptView.showError("Please enter a positive number.");
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("Please enter a valid number.");
+                        UserPromptView.showError("Please enter a valid number.");
                     }
                 }
             } else {
-                System.out.println("Password must be exactly 4 digits.");
+                UserPromptView.showError("Password must be exactly 4 digits.");
             }
         }
     }

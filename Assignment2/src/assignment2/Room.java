@@ -44,7 +44,7 @@ public abstract class Room {
     // Prints room information along with total price for a given number of guests and nights.
     public String printRoomWithPrice(int numGuests, int nights) {
         return("Room Number: " + roomNumber + "&emsp;|&emsp; Room Type: " + roomType + "&emsp;|&emsp; Maximum Guests Allowed: " + maxGuests
-                    + "&emsp;|&emsp; Total Price For " + numGuests + " Guests: $" + calculatePrice(numGuests) * nights);
+                    + "&emsp;|&emsp; <br>Total Price For " + numGuests + " Guests: $" + calculatePrice(numGuests) * nights + "<br>");
     }
 
     // --- Getter and Setter methods ---

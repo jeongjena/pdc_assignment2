@@ -70,7 +70,7 @@ public class Database {
             if (!checkTableExisting("BOOKINGS")) {
                 statement.executeUpdate("CREATE TABLE BOOKINGS (BOOKING_NUMBER INT PRIMARY KEY, CHECK_IN DATE, "
                         + "CHECK_OUT DATE, ROOM_NUMBER INT, NUMBER_OF_GUESTS INT, FIRST_NAME VARCHAR(40), "
-                        + "LAST_NAME VARCHAR(50), PHONE_NUMBER VARCHAR(11), PASSWORD INT)");
+                        + "LAST_NAME VARCHAR(50), PHONE_NUMBER VARCHAR(20), PASSWORD INT)");
             }
             statement.close();
 

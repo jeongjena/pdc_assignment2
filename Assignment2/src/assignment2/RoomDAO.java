@@ -29,18 +29,19 @@ public class RoomDAO {
                 int roomNumber = rs.getInt("ROOM_NUMBER");
                 roomNumbers.add(roomNumber);
             }
-
+            
             rs.close();
             stmt.close();
 
         } catch (SQLException e) {
+            UserPromptView.showError("Room Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
 
         return roomNumbers;
     }
 
-    public Room getRoom(int roomNumber) {
+    public static Room getRoom(int roomNumber) {
 
         try {
             Statement stmt = Database.getInstance().getConnection().createStatement();
@@ -49,11 +50,12 @@ public class RoomDAO {
             while (rs.next()) {
                 return buildRoomFromResultSet(rs);
             }
-
+            
             rs.close();
             stmt.close();
 
         } catch (SQLException e) {
+            UserPromptView.showError("Room Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
         return null;
@@ -75,6 +77,7 @@ public class RoomDAO {
             stmt.close();
 
         } catch (SQLException e) {
+            UserPromptView.showError("Room Table is not working. Please try it again.");
             System.out.println(e.getMessage());
         }
         return rooms;
@@ -89,6 +92,7 @@ public class RoomDAO {
             return true;
 
         } catch (SQLException e) {
+            UserPromptView.showError("Room Table is not working. Please try it again.");
             System.out.println(e.getMessage());
             return false;
         }
@@ -103,6 +107,7 @@ public class RoomDAO {
             return true;
 
         } catch (SQLException e) {
+            UserPromptView.showError("Room Table is not working. Please try it again.");
             System.out.println(e.getMessage());
             return false;
         }
